@@ -1,27 +1,25 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import ContextProvider from './ContextProvider';
-import TestEnv from './test-env'; 
+// src/app/layout.tsx
+import './globals.css'; // if you want global styles
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "Movie App",
-  description: "A dynamic movie website using TMDB API",
+export const metadata = {
+  title: 'Moovie Web',
+  description: 'Simple movie web app',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={geistSans.variable}>
+    <html lang="en">
+      <head />
       <body>
-        <ContextProvider>
-          {children}
-          <TestEnv /> 
-        </ContextProvider>
+        <header>
+          {/* You can add a nav bar or logo here */}
+          <h1>Moovie Web</h1>
+        </header>
+        <main>{children}</main>
+        <footer>
+          {/* Optional footer */}
+          <p>© 2025 Moovie Web</p>
+        </footer>
       </body>
     </html>
   );
