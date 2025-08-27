@@ -1,11 +1,11 @@
-"use client"; // Mark as Client Component
+"use client"; 
 
 import { useState, useContext, useEffect } from 'react';
-import MovieCard from '../components/MovieCard';
+import MovieCard from './components/MovieCard';
 import { UserContext } from './context';
-import Footer from '../components/Footer';
+import Footer from './components/Footer';
 
-// Define the shape of a movie/series item from TMDB API
+
 interface MediaItem {
   id: number;
   title?: string;
@@ -17,10 +17,10 @@ interface MediaItem {
   first_air_date?: string;
 }
 
-// Define the props shape for the Home component (no props needed now since fetching in client)
+
 interface HomeProps {}
 
-// Define the shape of the user object in UserContext
+
 interface User {
   sessionId: string | null;
   accountId: number | null;
@@ -33,35 +33,30 @@ export default function Home() {
   const [latestSeries, setLatestSeries] = useState<MediaItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<MediaItem[]>([]);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [error, setError] = useState<string | null>(null); // Add error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Start loading
-      setError(null); // Clear previous errors
+      setLoading(true);
+      setError(null);
       try {
-        const today = new Date().toISOString().slice(0, 10);
-
-        const moviesRes = await fetch(
-          `https://api.themoviedb.org/3/discover/movie?sort_by=release_date.desc&primary_release_date.lte=${today}&with_release_type=2|3`,
-          { headers: { Authorization: `Bearer ${process.env.TMDB_READ_TOKEN}` } }
-        );
-        if (!moviesRes.ok) throw new Error('Failed to fetch movies');
-        const moviesData = await moviesRes.json();
-        setLatestMovies(moviesData.results?.slice(0, 10) || []);
-
-        const seriesRes = await fetch(
-          `https://api.themoviedb.org/3/discover/tv?sort_by=first_air_date.desc&first_air_date.lte=${today}`,
-          { headers: { Authorization: `Bearer ${process.env.TMDB_READ_TOKEN}` } }
-        );
-        if (!seriesRes.ok) throw new Error('Failed to fetch series');
-        const seriesData = await seriesRes.json();
-        setLatestSeries(seriesData.results?.slice(0, 10) || []);
+        console.log('Fetching data from /api/movies at', new Date().toISOString());
+        const response = await fetch('/api/movies');
+        console.log('Fetch response status:', response.status, response.statusText);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to fetch data: ${response.status} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Fetched data:', JSON.stringify(data, null, 2));
+        setLatestMovies(data.latestMovies);
+        setLatestSeries(data.latestSeries);
       } catch (err) {
-        setError(err.message || 'An error occurred while fetching data');
+        console.error('Fetch error in page.tsx:', err);
+        setError((err as Error).message || 'An error occurred while fetching data');
       } finally {
-        setLoading(false); // End loading
+        setLoading(false);
       }
     };
 
@@ -76,7 +71,7 @@ export default function Home() {
           return res.json();
         })
         .then((data) => setSearchResults(data.results || []))
-        .catch((err) => setError(err.message || 'Search error'));
+        .catch((err) => setError((err as Error).message || 'Search error'));
     } else {
       setSearchResults([]);
     }
@@ -96,7 +91,7 @@ export default function Home() {
       {searchResults.length > 0 && (
         <div className="grid">
           {searchResults.map((item) => (
-            <MovieCard key={item.id} item={item} type={item.media_type} />
+            <MovieCard key={item.id} item={item} type={item.media_type || 'unknown'} />
           ))}
         </div>
       )}
