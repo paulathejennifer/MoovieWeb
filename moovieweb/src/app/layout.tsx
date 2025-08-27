@@ -1,5 +1,4 @@
-// src/app/layout.tsx
-import './globals.css'; // if you want global styles
+import './globals.css'; 
 
 export const metadata = {
   title: 'Moovie Web',
@@ -12,12 +11,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head />
       <body>
         <header>
-          {/* You can add a nav bar or logo here */}
           <h1>Moovie Web</h1>
         </header>
         <main>{children}</main>
         <footer>
-          {/* Optional footer */}
+
           <p>© 2025 Moovie Web</p>
         </footer>
       </body>
