@@ -1,8 +1,12 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  turbopack: {
-    root: '/home/student/MoovieWeb/moovieweb/',
-  },
-};
+import type { NextConfig } from "next";
 
-module.exports = nextConfig;
+const nextConfig: NextConfig = {
+  /* config options here */
+};
+module.exports = {
+  images: {
+    domains: ['image.tmdb.org'],
+  },
+}
+
+export default nextConfig;
